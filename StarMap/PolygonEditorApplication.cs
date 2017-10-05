@@ -19,6 +19,16 @@ namespace StarMap
         uint width, height;
         bool active = false;
 
+        public Vector2u EditorSize
+        {
+            get => new Vector2u(width, height);
+            set
+            {
+                width = value.X;
+                height = value.Y;
+            }
+        }
+
         public bool IsShiftKeyDown
         {
             get => Keyboard.IsKeyPressed(Keyboard.Key.LShift);

@@ -18,6 +18,8 @@ namespace StarMap
             public Vector2u Size;
         }
 
+        public const string PROJECT_FILE_FORMAT = ".smp";
+
         public static void Save(string file, PolygonEditorApplication app)
         {
             ProjectFile projectFile = new ProjectFile() { BackgroundImage = app.TextureFile, Size = app.EditorSize, Vertices = app.Vertices.ToArray() };

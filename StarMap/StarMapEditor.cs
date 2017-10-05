@@ -41,8 +41,8 @@ namespace StarMap
         const string AC_FORMAT_FILTER = "PolygonCollider V1|*.ac";
         const string SMC_FORMAT_FILTER = "Star Map Collider|*.smc";
         const string PNG_FILE_FILTER = "PNG File|*.png";
-        const string SM_FILTER = "Star Map File|*.smc;*.sm";
-        const string RAW_FORMAT_FILTER = "Star Map Project|*.sm";
+        const string SM_FILTER = "Star Map File|*.smc;*.smp";
+        const string RAW_FORMAT_FILTER = "Star Map Project|*.smp";
 
         readonly string OPEN_FILTER = $"{SM_FILTER}";
         readonly string SAVE_FILTER = $"{SMC_FORMAT_FILTER}|{RAW_FORMAT_FILTER}|{AC_FORMAT_FILTER}";
@@ -71,7 +71,7 @@ namespace StarMap
 
                 app.IsActive = true;
             }
-            else if (file.EndsWith(".sm"))
+            else if (file.EndsWith(ProjectFormat.PROJECT_FILE_FORMAT))
             {
                 ProjectFormat.Load(file, app);
             }
@@ -98,7 +98,7 @@ namespace StarMap
             openFileDialog.Filter = OPEN_FILTER;
 
             string[] args = Environment.GetCommandLineArgs();
-            if (args.Length >= 1)
+            if (args.Length > 1)
             {
                 // make sure it is a file and not some other command-line argument
                 if (File.Exists(args[1]))
@@ -106,7 +106,6 @@ namespace StarMap
                     string filePath = args[1];
                     // open file etc.
 
-                    MessageBox.Show(filePath);
                     LoadFile(filePath);
                 }
             }
@@ -130,7 +129,7 @@ namespace StarMap
             {
                 BinaryFormats.WriteDotAC(saveDialog.FileName, app.Vertices);
             }
-            else if (saveDialog.FileName.EndsWith(".sm"))
+            else if (saveDialog.FileName.EndsWith(ProjectFormat.PROJECT_FILE_FORMAT))
             {
                 ProjectFormat.Save(saveDialog.FileName, app);
             }
@@ -227,7 +226,7 @@ namespace StarMap
 
         private void statusTick_Tick(object sender, EventArgs e)
         {
-            txtStatus.Text = $"{app.EditorSize.X}x{app.EditorSize.Y} | AutoSize: {app.AutoSize} | Vertices: { app.Vertices.Count} ";
+            txtStatus.Text = $"{app.EditorSize.X}x{app.EditorSize.Y} | AutoSize: {app.AutoSize} | Vertices: { app.Vertices.Count} | { (app.IsControlKeyDown ? "[CTRL]" : "*")  } { (app.IsShiftKeyDown ? "[SHIFT]" : "*")  }";
 
             if (fileName != "")
                 Text = "Star Map - " + fileName;

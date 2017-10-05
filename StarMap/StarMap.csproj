@@ -48,5 +48,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\VorliasEngine2Dcs\Andromeda.csproj">
+      <Project>{6dbc821e-99e4-4735-8222-f5f3601e04ce}</Project>
+      <Name>Andromeda</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

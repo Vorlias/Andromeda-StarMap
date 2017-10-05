@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using AndromedaCanvas.Canvas;
 using SFML.Graphics;
 using SFML.System;
+using Andromeda2D.System.Utility;
+using SFML.Window;
 
 namespace StarMap
 {
@@ -16,6 +18,16 @@ namespace StarMap
         uint scale = 8;
         uint width, height;
         bool active = false;
+
+        public bool IsShiftKeyDown
+        {
+            get => Keyboard.IsKeyPressed(Keyboard.Key.LShift);
+        }
+
+        public bool IsControlKeyDown
+        {
+            get => Keyboard.IsKeyPressed(Keyboard.Key.LShift);
+        }
 
         public bool IsActive
         {
@@ -41,6 +53,11 @@ namespace StarMap
             //Utility.GenerateGridTexture(out grid, 8);
         }
 
+        public Vector2f MousePositionScaled
+        {
+            get => new Vector2f((float)Math.Floor((float)(MousePosition.X / scale)) * scale, (float)Math.Floor((float)(MousePosition.Y / scale)) * scale);
+        }
+
         protected override void Render()
         {
             if (active)
@@ -51,12 +68,25 @@ namespace StarMap
                     Window.Draw(sp);
                 }
 
+                VertexArray vertexArray = new VertexArray(PrimitiveType.LineStrip);
+
                 foreach (var vertice in vertices.ToArray())
                 {
                     RectangleShape rs = new RectangleShape(new Vector2f(scale, scale));
                     rs.Position = new Vector2f(vertice.X * scale, vertice.Y * scale);
+                    vertexArray.Append(new Vertex(new Vector2f(vertice.X * scale + scale / 2, vertice.Y * scale + scale / 2), Color.Yellow));
                     Window.Draw(rs);
+                    
                 }
+
+                if (vertices.Count > 1)
+                    vertexArray.Append(new Vertex(vertices.First().ToFloat() * scale, Color.Yellow));
+
+                Window.Draw(vertexArray);
+
+                RectangleShape mouseRect = new RectangleShape(new Vector2f(scale, scale));
+                mouseRect.Position = MousePositionScaled;
+                Window.Draw(mouseRect);
             }
         }
 

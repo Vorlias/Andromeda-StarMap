@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFML.System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -48,7 +49,9 @@ namespace StarMap
                 var result = BinaryFormats.ReadDotAC(diag.FileName);
                 app.Vertices.Clear();
                 app.Vertices.AddRange(result);
+                app.AutoSize = true;
                 app.UpdateGrid(256, 256);
+                app.EditorSize = new Vector2u(256, 256);
                 app.IsActive = true;
             }
 
@@ -78,7 +81,18 @@ namespace StarMap
         private void NewFileOK()
         {
             app.Vertices.Clear();
-            app.UpdateGrid(newFileDialog.ResultSize, newFileDialog.ResultSize);
+            if (newFileDialog.ResultAutoSize)
+            {
+                app.AutoSize = true;
+                app.UpdateGrid(256, 256);
+                app.EditorSize = new Vector2u(256, 256);
+                app.UpdateGrid(256, 256);
+            }
+            else
+            {
+                app.UpdateGrid(newFileDialog.ResultSize, newFileDialog.ResultSize);
+            }
+            
             app.IsActive = true;
         }
 

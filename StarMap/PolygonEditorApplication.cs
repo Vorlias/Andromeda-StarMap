@@ -18,6 +18,13 @@ namespace StarMap
         uint scale = 8;
         uint width, height;
         bool active = false;
+        bool _autoSize = false;
+
+        public bool AutoSize
+        {
+            get => _autoSize;
+            set => _autoSize = value;
+        }
 
         public Vector2u EditorSize
         {

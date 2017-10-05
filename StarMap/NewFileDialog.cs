@@ -17,6 +17,11 @@ namespace StarMap
             get => (uint)numericUpDown1.Value;
         }
 
+        public bool ResultAutoSize
+        {
+            get => checkBox1.Checked;
+        }
+
         public NewFileDialog()
         {
             InitializeComponent();
@@ -35,6 +40,11 @@ namespace StarMap
             this.DialogResult = DialogResult.OK;
             OK?.Invoke();
             this.Close();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            numericUpDown1.Enabled = !((CheckBox)sender).Checked;
         }
     }
 }

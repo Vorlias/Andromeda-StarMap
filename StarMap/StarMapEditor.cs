@@ -48,7 +48,7 @@ namespace StarMap
                 var result = BinaryFormats.ReadDotAC(diag.FileName);
                 app.Vertices.Clear();
                 app.Vertices.AddRange(result);
-                app.UpdateGrid(64, 64);
+                app.UpdateGrid(256, 256);
                 app.IsActive = true;
             }
 

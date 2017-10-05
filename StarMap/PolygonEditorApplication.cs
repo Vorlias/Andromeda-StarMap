@@ -51,6 +51,17 @@ namespace StarMap
         public PolygonEditorApplication(DrawingSurface handle) : base(handle)
         {
             //Utility.GenerateGridTexture(out grid, 8);
+            handle.Resized += SurfaceResized;
+        }
+
+        protected new void ResizeViews()
+        {
+            
+        }
+
+        private void SurfaceResized(Vector2i size)
+        {
+            Window.SetView(new View(size.ToFloat() / 2, size.ToFloat()));
         }
 
         public Vector2f MousePositionScaled

@@ -19,6 +19,25 @@ namespace StarMap
         uint width, height;
         bool active = false;
         bool _autoSize = false;
+        Texture backgroundTexture;
+        string _textureFile;
+
+        public uint EditorScale => scale;
+
+        public Texture BackgroundTexture
+        {
+            get => backgroundTexture;
+        }
+
+        public string TextureFile
+        {
+            get => _textureFile;
+            set
+            {
+                backgroundTexture = new Texture(value);
+                _textureFile = value;
+            }
+        }
 
         public bool AutoSize
         {
@@ -94,6 +113,14 @@ namespace StarMap
                 { 
                     Sprite sp = new Sprite(grid.Texture);
                     Window.Draw(sp);
+                }
+                
+                if (backgroundTexture != null)
+                {
+                    Sprite bgSprite = new Sprite(backgroundTexture);
+                    bgSprite.Color = new Color(255, 255, 255, 25);
+                    bgSprite.Scale = new Vector2f(EditorScale, EditorScale);
+                    Window.Draw(bgSprite);
                 }
 
                 VertexArray vertexArray = new VertexArray(PrimitiveType.LineStrip);

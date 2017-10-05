@@ -38,6 +38,17 @@ namespace StarMap
         ResizeDialog resizeDialog = new ResizeDialog();
         PolygonEditorApplication app;
 
+        const string AC_FORMAT_FILTER = "PolygonCollider V1|*.ac";
+        const string SMC_FORMAT_FILTER = "Star Map Collider|*.smc";
+        const string PNG_FILE_FILTER = "PNG File|*.png";
+        const string SM_FILTER = "Star Map File|*.smc;*.sm";
+        const string RAW_FORMAT_FILTER = "Star Map Project|*.sm";
+
+        readonly string OPEN_FILTER = $"{SM_FILTER}";
+        readonly string SAVE_FILTER = $"{SMC_FORMAT_FILTER}|{RAW_FORMAT_FILTER}|{AC_FORMAT_FILTER}";
+        readonly string IMPORT_FILTER = $"{PNG_FILE_FILTER}|{AC_FORMAT_FILTER}";
+
+
         private void drawingSurface1_Click(object sender, EventArgs e)
         {
 
@@ -56,6 +67,10 @@ namespace StarMap
             resizeDialog.OK += ResizeOK;
             
             saveFileDialog.FileOk += SaveFileOK;
+
+            importDialog.Filter = IMPORT_FILTER;
+            saveFileDialog.Filter = SAVE_FILTER;
+            openFileDialog.Filter = OPEN_FILTER;
         }
 
         private void ResizeOK()
@@ -94,8 +109,26 @@ namespace StarMap
 
                 FileName = new FileInfo( diag.FileName ).Name.Replace(".ac", "");
             }
+            else if (diag.FileName.EndsWith(".png"))
+            {
+                app.TextureFile = diag.FileName;
+                app.IsActive = true;
 
+                if (app.BackgroundTexture.Size.X > 256 || app.BackgroundTexture.Size.Y > 256)
+                {
+                    MessageBox.Show("Image is too large (256x256 limit)", "Uh oh", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    app.IsActive = false;
+                    return;
+                }
 
+                if (MessageBox.Show("Resize collider to image size?", "Resize", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    var size = app.BackgroundTexture.Size;
+                    app.AutoSize = false;
+                    app.UpdateGrid(size.X, size.Y);
+                    app.EditorSize = size;
+                }
+            }
         }
 
         private void DrawingSurface1_Resized(SFML.System.Vector2i size)

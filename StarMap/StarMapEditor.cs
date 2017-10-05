@@ -24,7 +24,7 @@ namespace StarMap
 
         private void StarMapEditor_Load(object sender, EventArgs e)
         {
-            drawingSurface1.Resized += this.DrawingSurface1_Resized;
+            dsStarMap.Resized += this.DrawingSurface1_Resized;
         }
 
         private void DrawingSurface1_Resized(SFML.System.Vector2i size)

@@ -11,7 +11,7 @@ using SFML.Window;
 
 namespace StarMap
 {
-    class PolygonEditorApplication : CanvasApplication
+    public class PolygonEditorApplication : CanvasApplication
     {
         RenderTexture grid;
         List<Vector2i> vertices = new List<Vector2i>();
@@ -78,6 +78,9 @@ namespace StarMap
 
         public void UpdateGrid(uint width, uint height, uint gridScale = 8)
         {
+            if (height > 128 && gridScale > 4)
+                gridScale = 4;
+
             this.width = width;
             this.height = height;
             Utility.GenerateGridTexture(out grid, gridScale, width, height);
@@ -86,7 +89,6 @@ namespace StarMap
 
         public PolygonEditorApplication(DrawingSurface handle) : base(handle)
         {
-            //Utility.GenerateGridTexture(out grid, 8);
             handle.Resized += SurfaceResized;
         }
 
@@ -118,7 +120,7 @@ namespace StarMap
                 if (backgroundTexture != null)
                 {
                     Sprite bgSprite = new Sprite(backgroundTexture);
-                    bgSprite.Color = new Color(255, 255, 255, 25);
+                    bgSprite.Color = new Color(255, 255, 255, 100);
                     bgSprite.Scale = new Vector2f(EditorScale, EditorScale);
                     Window.Draw(bgSprite);
                 }

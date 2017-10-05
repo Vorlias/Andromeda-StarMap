@@ -54,6 +54,31 @@ namespace StarMap
 
         }
 
+        private void LoadFile(string file)
+        {
+            if (file.EndsWith(BinaryFormats.EXTENSION_STARMAP_COLLIDER))
+            {
+                BinaryFormats.ReadDotSMC(file, out Vector2i[] vertices, out bool autoSize, out Vector2u size);
+
+                app.Vertices.Clear();
+                app.Vertices.AddRange(vertices);
+                app.AutoSize = autoSize;
+
+                if (autoSize)
+                    app.UpdateGrid(64, 64);
+                else
+                    app.UpdateGrid(size.X, size.Y);
+
+                app.IsActive = true;
+            }
+            else if (file.EndsWith(".sm"))
+            {
+                ProjectFormat.Load(file, app);
+            }
+            else
+                MessageBox.Show("This filetype cannot be opened with this program!", "Oops!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         private void StarMapEditor_Load(object sender, EventArgs e)
         {
             
@@ -71,6 +96,20 @@ namespace StarMap
             importDialog.Filter = IMPORT_FILTER;
             saveFileDialog.Filter = SAVE_FILTER;
             openFileDialog.Filter = OPEN_FILTER;
+
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length >= 1)
+            {
+                // make sure it is a file and not some other command-line argument
+                if (File.Exists(args[1]))
+                {
+                    string filePath = args[1];
+                    // open file etc.
+
+                    MessageBox.Show(filePath);
+                    LoadFile(filePath);
+                }
+            }
         }
 
         private void ResizeOK()
@@ -90,6 +129,10 @@ namespace StarMap
             else if (saveDialog.FileName.EndsWith(BinaryFormats.EXTENSION_POLYEDIT_COLLIDER))
             {
                 BinaryFormats.WriteDotAC(saveDialog.FileName, app.Vertices);
+            }
+            else if (saveDialog.FileName.EndsWith(".sm"))
+            {
+                ProjectFormat.Save(saveDialog.FileName, app);
             }
         }
 
@@ -197,26 +240,12 @@ namespace StarMap
             saveFileDialog.ShowDialog();
         }
 
+
+
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             var openDialog = (OpenFileDialog)sender;
-            if (openDialog.FileName.EndsWith(BinaryFormats.EXTENSION_STARMAP_COLLIDER))
-            {
-                BinaryFormats.ReadDotSMC(openDialog.FileName, out Vector2i[] vertices, out bool autoSize, out Vector2u size);
-
-                app.Vertices.Clear();
-                app.Vertices.AddRange(vertices);
-                app.AutoSize = autoSize;
-
-                if (autoSize)
-                    app.UpdateGrid(64, 64);
-                else
-                    app.UpdateGrid(size.X, size.Y);
-
-                app.IsActive = true;
-            }
-            else
-                Console.WriteLine("wat");
+            LoadFile(openDialog.FileName);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)

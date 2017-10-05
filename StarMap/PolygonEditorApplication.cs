@@ -91,7 +91,7 @@ namespace StarMap
                 }
 
                 if (vertices.Count > 1)
-                    vertexArray.Append(new Vertex(vertices.First().ToFloat() * scale, Color.Yellow));
+                    vertexArray.Append(new Vertex(vertices.First().ToFloat() * scale + (new Vector2f(scale / 2, scale / 2)), Color.Yellow));
 
                 Window.Draw(vertexArray);
 

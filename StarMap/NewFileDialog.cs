@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFML.System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +13,9 @@ namespace StarMap
 {
     public partial class NewFileDialog : Form
     {
-        public uint ResultSize
+        public Vector2u ResultSize
         {
-            get => (uint)numericUpDown1.Value;
+            get => new Vector2u((uint)numScaleX.Value, (uint) numScaleY.Value);
         }
 
         public bool ResultAutoSize
@@ -38,13 +39,16 @@ namespace StarMap
         private void btnCreate_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
-            OK?.Invoke();
+            
             this.Close();
+            OK?.Invoke();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            numericUpDown1.Enabled = !((CheckBox)sender).Checked;
+            var enabled = !((CheckBox)sender).Checked;
+            numScaleX.Enabled = enabled;
+            numScaleY.Enabled = enabled;
         }
     }
 }

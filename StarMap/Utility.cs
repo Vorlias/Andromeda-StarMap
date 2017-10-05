@@ -23,8 +23,8 @@ namespace StarMap
                     var rect = new RectangleShape(new Vector2f(scale, scale))
                     {
                         Position = new Vector2f(x, y),
-                        FillColor = new Color(50, 50, 50),
-                        OutlineColor = new Color(150, 150, 150),
+                        FillColor = new Color(75, 75, 75),
+                        OutlineColor = new Color(50, 50, 50),
                         OutlineThickness = 1
                     };
                     target.Draw(rect);

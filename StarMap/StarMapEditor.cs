@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,23 @@ namespace StarMap
             InitializeComponent();
         }
 
+        string fileName = "";
+
+        public string FileName
+        {
+            get
+            {
+                return fileName;
+            }
+            set
+            {
+                fileName = value;
+                saveFileDialog.FileName = fileName;
+            }
+        }
+
         NewFileDialog newFileDialog = new NewFileDialog();
+        ResizeDialog resizeDialog = new ResizeDialog();
         PolygonEditorApplication app;
 
         private void drawingSurface1_Click(object sender, EventArgs e)
@@ -36,9 +53,30 @@ namespace StarMap
 
             importDialog.FileOk += OnFileImport;
             newFileDialog.OK += NewFileOK;
+            resizeDialog.OK += ResizeOK;
+            
+            saveFileDialog.FileOk += SaveFileOK;
         }
 
+        private void ResizeOK()
+        {
+            app.AutoSize = false;
+            app.EditorSize = resizeDialog.ResultSize;
+            app.UpdateGrid(app.EditorSize.X, app.EditorSize.Y);
+        }
 
+        private void SaveFileOK(object sender, CancelEventArgs e)
+        {
+            var saveDialog = (SaveFileDialog)sender;
+            if (saveDialog.FileName.EndsWith(BinaryFormats.EXTENSION_STARMAP_COLLIDER))
+            {
+                BinaryFormats.WriteDotSMC(saveDialog.FileName, app.EditorSize, app.Vertices, app.AutoSize);
+            }
+            else if (saveDialog.FileName.EndsWith(BinaryFormats.EXTENSION_POLYEDIT_COLLIDER))
+            {
+                BinaryFormats.WriteDotAC(saveDialog.FileName, app.Vertices);
+            }
+        }
 
         private void OnFileImport(object sender, CancelEventArgs e)
         {
@@ -50,9 +88,11 @@ namespace StarMap
                 app.Vertices.Clear();
                 app.Vertices.AddRange(result);
                 app.AutoSize = true;
-                app.UpdateGrid(256, 256);
-                app.EditorSize = new Vector2u(256, 256);
+                app.UpdateGrid(64, 64);
+                app.EditorSize = new Vector2u(64, 64);
                 app.IsActive = true;
+
+                FileName = new FileInfo( diag.FileName ).Name.Replace(".ac", "");
             }
 
 
@@ -80,6 +120,8 @@ namespace StarMap
 
         private void NewFileOK()
         {
+            app.IsActive = false;
+
             app.Vertices.Clear();
             if (newFileDialog.ResultAutoSize)
             {
@@ -90,7 +132,8 @@ namespace StarMap
             }
             else
             {
-                app.UpdateGrid(newFileDialog.ResultSize, newFileDialog.ResultSize);
+                app.EditorSize = newFileDialog.ResultSize;
+                app.UpdateGrid(newFileDialog.ResultSize.X, newFileDialog.ResultSize.Y);
             }
             
             app.IsActive = true;
@@ -104,6 +147,59 @@ namespace StarMap
 
             newFileDialog.ShowDialog();
             
+        }
+
+        private void statusTick_Tick(object sender, EventArgs e)
+        {
+            txtStatus.Text = $"{app.EditorSize.X}x{app.EditorSize.Y} | AutoSize: {app.AutoSize} | Vertices: { app.Vertices.Count} ";
+
+            if (fileName != "")
+                Text = "Star Map - " + fileName;
+            else
+                Text = "Star Map";
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveFileDialog.ShowDialog();
+        }
+
+        private void openFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            var openDialog = (OpenFileDialog)sender;
+            if (openDialog.FileName.EndsWith(BinaryFormats.EXTENSION_STARMAP_COLLIDER))
+            {
+                BinaryFormats.ReadDotSMC(openDialog.FileName, out Vector2i[] vertices, out bool autoSize, out Vector2u size);
+
+                app.Vertices.Clear();
+                app.Vertices.AddRange(vertices);
+                app.AutoSize = autoSize;
+
+                if (autoSize)
+                    app.UpdateGrid(64, 64);
+                else
+                    app.UpdateGrid(size.X, size.Y);
+
+                app.IsActive = true;
+            }
+            else
+                Console.WriteLine("wat");
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openFileDialog.ShowDialog();
+        }
+
+        private void changeSizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            resizeDialog.ResultSize = app.EditorSize;
+            resizeDialog.ShowDialog();
+        }
+
+        private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+
         }
     }
 }

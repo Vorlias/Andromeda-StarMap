@@ -104,7 +104,6 @@ namespace StarMap
                     rs.Position = new Vector2f(vertice.X * scale, vertice.Y * scale);
                     vertexArray.Append(new Vertex(new Vector2f(vertice.X * scale + scale / 2, vertice.Y * scale + scale / 2), Color.Yellow));
                     Window.Draw(rs);
-                    
                 }
 
                 if (vertices.Count > 1)
